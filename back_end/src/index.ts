@@ -1,12 +1,14 @@
 import express, { Request, Response, NextFunction } from "express";
 import bodyParser from "body-parser";
 import { connect } from "mongoose";
-
-// Importing routers
+import morgan from "morgan"
 import { forumRouter } from "./routers/forum";
 
-const app = express();
 const port = 3000;
+
+const app = express();
+app.use(morgan('combined'))
+
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));

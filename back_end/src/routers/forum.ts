@@ -22,6 +22,13 @@ forumRouter.put(
   }
 );
 
+forumRouter.get("/subjects" ,  async (req: Request, res: Response, next: NextFunction) => {
+  const subjectList = await forumController.getSubjectList()
+  res.status(200)
+  res.send(subjectList)
+  return
+})
+
 forumRouter.get(
   "/messages/:subjectId",
   async (req: Request, res: Response, next: NextFunction) => {

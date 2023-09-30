@@ -15,6 +15,16 @@ async function getSubject(subjectId: string) {
   return result?.toObject();
 }
 
+async function getSubjectList() {
+  const subjectDocList = await Subjects.find({}, "-messageList -__v");
+
+  const subjectList = [];
+  for (const subjectDoc of subjectDocList) {
+    subjectList.push(subjectDoc.toObject());
+  }
+  return subjectList;
+}
+
 async function createsNewMessage(subjectId: string, body: { content: string }) {
   const newSubject = await Subjects.findByIdAndUpdate(
     subjectId,
@@ -30,5 +40,6 @@ async function createsNewMessage(subjectId: string, body: { content: string }) {
 export const forumController = {
   createSubject,
   getSubject,
+  getSubjectList,
   createsNewMessage,
 };
