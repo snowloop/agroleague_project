@@ -6,7 +6,7 @@
 technologies : yarn, express, jest, typescript
 ## /forum router
 
-##### POST /forum/subject
+##### PUT /forum/subject
 creates a new subject
 
 *body :* 
@@ -15,7 +15,6 @@ content: string;
 authorId: string;
 }
 `
-
 ##### GET /forum/subjects?authorId=
 *params :*
 `authorId? : string`
@@ -23,25 +22,19 @@ authorId: string;
 *response body :*
 `[... subjects]
 `
-
-#### GET /forum/answers/:subjectId
+##### GET /forum/messages/:subjectId
 
 *response body :*
-`[... answers]
+`[... messages]
 `
-
-##### POST /forum/answers
-
+##### POST /forum/messages/:subjectId
 Creates a new message, linked to a previous message
 
 *body :*
 `{
-    parentId : string;
     content: string;
     authorId?: string;
 }`
-
-
 ## /users router
 POST /users
 

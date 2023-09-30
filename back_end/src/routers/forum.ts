@@ -1,20 +1,73 @@
 import Router, { NextFunction, Request, Response } from "express";
-import { checkSchema, validationResult } from "express-validator";
-import { postSubjectBody } from "./validator";
+import { validationResult } from "express-validator";
+import { forumValidators } from "./validator";
+import { forumController } from "../controllers/forum";
+
 const forumRouter = Router();
 
-forumRouter.post(
+forumRouter.put(
   "/subject",
-  postSubjectBody,
-  (req: Request, res: Response, next: NextFunction) => {
+  forumValidators.putSubjectBody,
+  async (req: Request, res: Response, next: NextFunction) => {
     const vResult = validationResult(req);
-    console.log(req.body)
     if (!vResult.isEmpty()) {
       res.status(400);
       res.send(vResult.array());
       return;
     }
-    res.send("Salut");
+
+    const newSubject = await forumController.createSubject(req.body);
+    res.status(201);
+    res.send(newSubject);
+  }
+);
+
+forumRouter.get(
+  "/messages/:subjectId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    let subject;
+    try {
+      subject = await forumController.getSubject(req.params["subjectId"]);
+    } catch (err) {
+      console.log(err);
+      res.status(404).send();
+      return;
+    }
+
+    res.status(200);
+    res.send(subject?.messageList);
+  }
+);
+
+forumRouter.post(
+  "/messages/:subjectId",
+  forumValidators.postMessageBody,
+  async (req: Request, res: Response, next: NextFunction) => {
+    const vResult = validationResult(req);
+    if (!vResult.isEmpty()) {
+      res.status(400);
+      res.send(vResult.array());
+      return;
+    }
+
+    const { subjectId } = req.params;
+    let newSubject;
+    let err: Error | undefined = undefined;
+    try {
+      newSubject = await forumController.createsNewMessage(subjectId, req.body);
+    } catch (e) {
+      console.log(e);
+      err = e as Error;
+    }
+
+    if (err || !newSubject) {
+      res.status(404);
+      res.send();
+      return;
+    }
+    res.status(201);
+    res.send(newSubject);
+    return;
   }
 );
 

@@ -1,21 +1,39 @@
 import { checkSchema } from "express-validator";
 
-
-
-export const postSubjectBody = checkSchema(
-    {
-      subject: {
-        isLength: {
-          options: { min: 2 },
-        },
+const putSubjectBody = checkSchema(
+  {
+    subject: {
+      isLength: {
+        options: { min: 2 },
       },
-      content: {
-        isLength: {
-          options: {
-            min: 2,
-          },
+    },
+    content: {
+      isLength: {
+        options: {
+          min: 2,
         },
       },
     },
-    ["body"]
-  )
+  },
+  ["body"]
+);
+
+const postMessageBody = checkSchema(
+  {
+    content: {
+      isLength: {
+        options: {
+          min: 2,
+        },
+      },
+    },
+  },
+  ["body"]
+);
+
+const forumValidators = {
+  putSubjectBody,
+  postMessageBody,
+};
+
+export { forumValidators };
