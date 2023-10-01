@@ -1,5 +1,12 @@
 import { checkSchema } from "express-validator";
 
+const subjectIdParams = checkSchema(
+  {
+    subjectId: { isMongoId: true },
+  },
+  ["params"]
+);
+
 const putSubjectBody = checkSchema(
   {
     subject: {
@@ -34,6 +41,7 @@ const postMessageBody = checkSchema(
 const forumValidators = {
   putSubjectBody,
   postMessageBody,
+  subjectIdParams,
 };
 
 export { forumValidators };

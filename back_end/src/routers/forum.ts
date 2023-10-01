@@ -22,33 +22,51 @@ forumRouter.put(
   }
 );
 
-forumRouter.get("/subjects" ,  async (req: Request, res: Response, next: NextFunction) => {
-  const subjectList = await forumController.getSubjectList()
-  res.status(200)
-  res.send(subjectList)
-  return
-})
+forumRouter.get(
+  "/subjects",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const subjectList = await forumController.getSubjectList();
+    res.status(200);
+    res.send(subjectList);
+    return;
+  }
+);
 
 forumRouter.get(
   "/messages/:subjectId",
+  forumValidators.subjectIdParams,
   async (req: Request, res: Response, next: NextFunction) => {
-    let subject;
+    const vResult = validationResult(req);
+    if (!vResult.isEmpty()) {
+      res.status(400);
+      res.send(vResult.array());
+      return;
+    }
+    let messageList;
     try {
-      subject = await forumController.getSubject(req.params["subjectId"]);
+      messageList = await forumController.getMessageList(
+        req.params["subjectId"]
+      );
     } catch (err) {
-      console.log(err);
-      res.status(404).send();
+      next(err);
+      return;
+    }
+
+    if (!messageList) {
+      res.status(404);
+      res.send();
       return;
     }
 
     res.status(200);
-    res.send(subject?.messageList);
+    res.send(messageList);
   }
 );
 
 forumRouter.post(
   "/messages/:subjectId",
   forumValidators.postMessageBody,
+  forumValidators.subjectIdParams,
   async (req: Request, res: Response, next: NextFunction) => {
     const vResult = validationResult(req);
     if (!vResult.isEmpty()) {
@@ -57,24 +75,25 @@ forumRouter.post(
       return;
     }
 
-    const { subjectId } = req.params;
-    let newSubject;
-    let err: Error | undefined = undefined;
+    let newMessageList;
     try {
-      newSubject = await forumController.createsNewMessage(subjectId, req.body);
-    } catch (e) {
-      console.log(e);
-      err = e as Error;
+      newMessageList = await forumController.createsNewMessage(
+        req.params.subjectId,
+        req.body
+      );
+    } catch (err) {
+      next(err);
+      return;
     }
 
-    if (err || !newSubject) {
+    if (!newMessageList) {
       res.status(404);
       res.send();
       return;
     }
+
     res.status(201);
-    res.send(newSubject);
-    return;
+    res.send(newMessageList);
   }
 );
 

@@ -1,5 +1,4 @@
 import { Subjects } from "../models/subject";
-import { messageSchema } from "../models/message";
 
 async function createSubject(body: { subject: string; content: string }) {
   const newSubject = new Subjects({
@@ -10,9 +9,9 @@ async function createSubject(body: { subject: string; content: string }) {
   return document.toObject();
 }
 
-async function getSubject(subjectId: string) {
-  const result = await Subjects.findById(subjectId, { messageList: 1 });
-  return result?.toObject();
+async function getMessageList(subjectId: string) {
+  const subject = await Subjects.findById(subjectId, { messageList: 1 });
+  return subject?.messageList;
 }
 
 async function getSubjectList() {
@@ -31,15 +30,15 @@ async function createsNewMessage(subjectId: string, body: { content: string }) {
     {
       $addToSet: { messageList: { content: body.content } },
     },
-    { runValidators: true }
+    { runValidators: true, projection: "messageList", returnDocument: "after" }
   );
 
-  return newSubject?.toObject();
+  return newSubject?.toObject().messageList;
 }
 
 export const forumController = {
   createSubject,
-  getSubject,
+  getMessageList,
   getSubjectList,
   createsNewMessage,
 };
