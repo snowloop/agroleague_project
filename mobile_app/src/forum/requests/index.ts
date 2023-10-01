@@ -1,4 +1,4 @@
-import { TSubjectWithoutMessages, IMessage } from "../types";
+import { TSubjectWithoutMessages, IMessage, ISubject } from "../types";
 
 // TO BE REPLACED
 const backEndUrl = "http://192.168.1.52:3000";
@@ -30,4 +30,16 @@ export async function postMessage(id: string, content: string) {
     body: JSON.stringify({ content }),
   });
   return await handleResponse<IMessage[]>(response);
+}
+
+export async function putSubject(subject: string, content: string) {
+  const response = await fetch(`${backEndUrl}/forum/subject`, {
+    method: "put",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ content, subject }),
+  });
+  return await handleResponse<ISubject>(response);
 }

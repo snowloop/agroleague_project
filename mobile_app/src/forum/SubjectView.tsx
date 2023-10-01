@@ -47,6 +47,8 @@ const SubjectView: React.FC<ISubjectViewProps> = ({
     setLoading(false);
   }
 
+  const isSubmitButtonDisabled: boolean = loading || answerDraft.length < 20;
+
   const jsxBody = (
     <>
       <Text style={styles.mainTitle}>{subject.value}</Text>
@@ -63,7 +65,7 @@ const SubjectView: React.FC<ISubjectViewProps> = ({
           <Markdown value={answerDraft} />
           <Button
             onPress={() => postNewMessage(subject._id, answerDraft)}
-            disabled={loading}
+            disabled={isSubmitButtonDisabled}
             title="Envoyez la réponse"
             color="blue"
           />

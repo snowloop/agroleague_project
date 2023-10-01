@@ -1,5 +1,5 @@
 import React from "react";
-import { StatusBar, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { TSubjectWithoutMessages } from "./types";
 
 interface IItemProps {

@@ -11,13 +11,13 @@ const putSubjectBody = checkSchema(
   {
     subject: {
       isLength: {
-        options: { min: 2 },
+        options: { min: 7 },
       },
     },
     content: {
       isLength: {
         options: {
-          min: 2,
+          min: 20,
         },
       },
     },
@@ -30,7 +30,7 @@ const postMessageBody = checkSchema(
     content: {
       isLength: {
         options: {
-          min: 2,
+          min: 20,
         },
       },
     },

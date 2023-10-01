@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { View, Text, StyleSheet, FlatList, Button } from "react-native";
 import { ListItem } from "./ListItem";
 import { SubjectView } from "./SubjectView";
 import { TSubjectWithoutMessages } from "./types";
 
 import { getSubjects } from "./requests";
 
-const ForumView: React.FC = () => {
+interface IForumViewProms {
+  switchToSubjectCreation: () => void;
+}
+const ForumView: React.FC<IForumViewProms> = ({ switchToSubjectCreation }) => {
   const [subjectList, setSubjectList] = useState<TSubjectWithoutMessages[]>([]);
 
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
@@ -27,13 +30,20 @@ const ForumView: React.FC = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Agroleague Forum</Text>
       {!selectedSubject ? (
-        <FlatList
-          data={subjectList}
-          renderItem={({ item }) => (
-            <ListItem item={item} onPress={() => setSelectedId(item._id)} />
-          )}
-          style={styles.mainList}
-        />
+        <>
+          <FlatList
+            data={subjectList}
+            renderItem={({ item }) => (
+              <ListItem item={item} onPress={() => setSelectedId(item._id)} />
+            )}
+            style={styles.mainList}
+          />
+          <Button
+            onPress={switchToSubjectCreation}
+            title="Créer un nouveau sujet"
+            color="darkslateblue"
+          />
+        </>
       ) : (
         <SubjectView
           subject={selectedSubject}
@@ -46,12 +56,7 @@ const ForumView: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    // display: "flex",
     height: "100%",
-    // flexDirection: "column",
-    // alignItems: "stretch",
-    // justifyContent: "center",
-    fontVariant: "",
     paddingVertical: 4,
     paddingBottom: 40,
     backgroundColor: "cornsilk",
