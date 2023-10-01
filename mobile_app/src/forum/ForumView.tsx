@@ -1,32 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
-import { ListItem, SubjectView } from ".";
-import { handleResponse } from "../utils";
+import { ListItem } from "./ListItem";
+import { SubjectView } from "./SubjectView";
 import { TSubjectWithoutMessages } from "./types";
 
-const backEndUrl = "http://192.168.1.52:3000";
+import { getSubjects } from "./requests";
 
-async function GetSubjetcts() {
-  console.log("ici");
-  const response = await fetch(`${backEndUrl}/forum/subjects`);
-  return handleResponse<TSubjectWithoutMessages[]>(response);
-}
 const ForumView: React.FC = () => {
   const [subjectList, setSubjectList] = useState<TSubjectWithoutMessages[]>([]);
 
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   useEffect(() => {
-    GetSubjetcts()
-      .then((subjectList) => {
-        setSubjectList(subjectList);
-      })
+    getSubjects()
+      .then((subjectList) => setSubjectList(subjectList))
       .catch(console.error);
   }, []);
+
+  let selectedSubject: TSubjectWithoutMessages | undefined = undefined;
+  for (const subject of subjectList) {
+    if (subject._id === selectedId) {
+      selectedSubject = subject;
+    }
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Agroleague Forum</Text>
-      {!selectedId ? (
+      {!selectedSubject ? (
         <FlatList
           data={subjectList}
           renderItem={({ item }) => (
@@ -35,7 +35,10 @@ const ForumView: React.FC = () => {
           style={styles.mainList}
         />
       ) : (
-        <SubjectView id={selectedId} />
+        <SubjectView
+          subject={selectedSubject}
+          backFunction={() => setSelectedId(undefined)}
+        />
       )}
     </View>
   );
@@ -43,16 +46,22 @@ const ForumView: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "stretch",
-    justifyContent: "center",
-    padding: 10,
+    // display: "flex",
+    height: "100%",
+    // flexDirection: "column",
+    // alignItems: "stretch",
+    // justifyContent: "center",
+    fontVariant: "",
+    paddingVertical: 4,
+    paddingBottom: 40,
+    backgroundColor: "cornsilk",
   },
   title: {
-    padding: 15,
-    fontSize: 32,
+    padding: 10,
+    fontSize: 26,
     alignSelf: "center",
+    fontWeight: "bold",
+    color: "brown",
   },
   mainList: {},
 });
